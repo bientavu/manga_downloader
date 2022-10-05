@@ -8,7 +8,7 @@ import pyperclip
 
 from bs4 import BeautifulSoup as BSHTML
 
-from variables import URL, WORKING_DIR, CHAPTER_FROM, CHAPTER_TO, INPUTS, SELECT_MANGA, EXTENSION_DIR, WEBDRIVER_DIR, \
+from variables_and_constants import URL, WORKING_DIR, CHAPTER_FROM, CHAPTER_TO, INPUTS, SELECT_MANGA, EXTENSION_DIR, WEBDRIVER_DIR, \
     EXTENSION_URL, CLASS_SRC_NAME
 
 from selenium import webdriver
