@@ -54,14 +54,19 @@ INPUTS = {
         "https://mangas-origines.fr/manga/lecteur-omniscient/chapitre-",
         "wp-manga-chapter-img",
         "https://mangas-origines.fr"
+    ],
+    "lexpert-de-la-tour-tutoriel": [
+        "https://mangas-origines.fr/manga/lexpert-de-la-tour-tutoriel/chapitre-",
+        "wp-manga-chapter-img",
+        "https://mangas-origines.fr"
     ]
 }
 
 
 # VARIABLES
-SELECT_MANGA = "lecteur-omniscient"
+SELECT_MANGA = "tomb-raider-king"
 CHAPTER_FROM = 1
-CHAPTER_TO = 2
+CHAPTER_TO = 10
 CLASS_SRC_NAME = "src"
 SEASON_NUMBER = 1
 EPISODE_FROM = 32

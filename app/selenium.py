@@ -8,6 +8,7 @@ def retrieve_imgs_urls_with_selenium(url):
     driver = uc.Chrome(options=chrome_options_uc, use_subprocess=True)
     driver.get(url)
     time.sleep(4)
+    driver.minimize_window()
     html = driver.page_source
     soup = BSHTML(html, 'html.parser')
     return soup.findAll('img')
