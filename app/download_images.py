@@ -97,13 +97,19 @@ def request_for_images_with_cloudflare(image, fullfilename):
 
 
 def request_for_urls_without_cloudflare(url):
-    page = urllib.request.urlopen(url)
+    # req = urllib.request.Request(url)
+    # req.add_header('referer', 'https://mangas-origines.fr/')
+    # page = urllib.request.urlopen(req)
+    headers = {'referer': 'https://mangas-origines.fr/'}
+    page = requests.get(url, headers=headers)
     soup = BSHTML(page, 'html.parser')
     return soup.findAll('img')
 
 
 def request_for_images_without_cloudflare(image, fullfilename):
-    urllib.request.urlretrieve(image['src'], fullfilename)
+    headers = {'referer': 'https://mangas-origines.fr/'}
+    request = requests.post(image['src'], headers=headers)
+    open(fullfilename, 'wb').write(request.content)
 
 
 def request_for_urls_checks(url):
@@ -142,9 +148,10 @@ def curl_images_from_urls_without_selenium(urls, full_paths):
                 except KeyError:
                     continue
                 try:
-                    if image['class'][0].startswith(INPUTS[SELECT_MANGA][1]) is True or \
-                            image['class'][1].startswith(INPUTS[SELECT_MANGA][1]) is True or \
-                            image['class'][2].startswith(INPUTS[SELECT_MANGA][1]) is True:
+                    if image['class'][0].startswith(INPUTS[SELECT_MANGA][1]) is True and len(image['class']) == 1:
+                        # if image['class'][0].startswith(INPUTS[SELECT_MANGA][1]) is True or \
+                        #         image['class'][1].startswith(INPUTS[SELECT_MANGA][1]) is True or \
+                        #         image['class'][2].startswith(INPUTS[SELECT_MANGA][1]) is True:
                         fullfilename = os.path.join(f"{path}/", f"{str(index_path).zfill(3)}.jpg")
                         request_for_images_checks(image, fullfilename)
                         print(
@@ -177,7 +184,7 @@ def curl_images_from_urls_with_selenium(urls, full_paths):
                 except KeyError:
                     continue
                 if image['class'][0].startswith(INPUTS[SELECT_MANGA][1]) is True and len(image['class']) == 1:
-                # if image['class'][0].startswith(INPUTS[SELECT_MANGA][1]) is True:
+                    # if image['class'][0].startswith(INPUTS[SELECT_MANGA][1]) is True:
                     # image['class'][1].startswith(INPUTS[SELECT_MANGA][1]) is True or \
                     # image['class'][2].startswith(INPUTS[SELECT_MANGA][1]) is True:
                     fullfilename = os.path.join(f"{path}/", f"{str(index_path).zfill(3)}.jpg")
@@ -238,3 +245,11 @@ def retrieve_imgs_urls_with_selenium(url):
     html = driver.page_source
     soup = BSHTML(html, 'html.parser')
     return soup.findAll('img')
+
+
+def test():
+    headers = {'referer': 'https://mangas-origines.fr/'}
+    request = requests.post(
+        'https://mangas-origines.fr/wp-content/uploads/WP-manga/data/manga_633b06ed971b2/a6b4010db1f3aeb1486ae7ca66310edc/1003.webp',
+        headers=headers)
+    open('image3.jpg', 'wb').write(request.content)

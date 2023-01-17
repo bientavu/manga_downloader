@@ -1,6 +1,6 @@
 from app.download_images import get_chapters_urls, create_folders, count_number_of_dirs, \
     curl_images_from_urls_with_selenium, curl_images_from_urls_without_selenium, \
-    get_chapters_for_custom_urls
+    get_chapters_for_custom_urls, test
 from app.merge_images import create_folders_and_files_name_dict, zip_chapters, \
     create_chapters_path_list, change_extension_to_cbz, rm_work_dir
 from variables_and_constants import CHAPTER_NUMBERS, INPUTS, SELECT_MANGA, SEASON_NUMBER, EPISODE_NUMBERS
@@ -20,3 +20,5 @@ chapters_path_list = create_chapters_path_list(folders_and_files_name)
 zip_chapters(chapters_path_list)
 change_extension_to_cbz()
 rm_work_dir()
+
+# test()
