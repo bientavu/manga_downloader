@@ -6,9 +6,9 @@ load_dotenv()
 
 INPUTS = {
     "overgeared": [
-        "https://www.pantheon-scan.fr/overgeared-chapitre-",
-        "alignnone",
-        "no_selenium"
+        "https://mangas-origines.fr/manga/overgeared-remake/chapitre-",
+        "wp-manga-chapter-img",
+        "selenium_flaresolverr"
     ],
     "the-player-that-cant-level-up": [
         "https://reaperscans.fr/serie/the-player-that-can-t-level-up/chapitre-",
@@ -44,15 +44,25 @@ INPUTS = {
         "https://mangas-origines.fr/manga/1-nano-machine/chapitre-",
         "wp-manga-chapter-img",
         "selenium_flaresolverr"
+    ],
+    "tomb-raider-king": [
+        "https://mangas-origines.fr/manga/12-tomb-raider-king/chapitre-",
+        "wp-manga-chapter-img",
+        "selenium_flaresolverr"
+    ],
+    "lecteur-omniscient": [
+        "https://mangas-origines.fr/manga/lecteur-omniscient/chapitre-",
+        "wp-manga-chapter-img",
+        "no_selenium"
     ]
 }
 
 
 
 # VARIABLES
-SELECT_MANGA = "tower-of-god"
+SELECT_MANGA = "lecteur-omniscient"
 CHAPTER_FROM = 1
-CHAPTER_TO = 1
+CHAPTER_TO = 2
 CLASS_SRC_NAME = "src"
 SEASON_NUMBER = 1
 EPISODE_FROM = 32
