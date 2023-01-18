@@ -8,14 +8,16 @@ import pyperclip
 
 from bs4 import BeautifulSoup as BSHTML
 
-from variables_and_constants import URL, WORKING_DIR, CHAPTER_FROM, CHAPTER_TO, INPUTS, SELECT_MANGA, EXTENSION_DIR, WEBDRIVER_DIR, \
-    EXTENSION_URL, CLASS_SRC_NAME
+from variables_and_constants import URL, WORKING_DIR, CHAPTER_FROM, CHAPTER_TO, INPUTS, SELECT_MANGA, EXTENSION_DIR, \
+    WEBDRIVER_DIR, \
+    EXTENSION_URL, CLASS_SRC_NAME, EPISODE_FROM, EPISODE_TO
 
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
+import undetected_chromedriver as uc
 
 
 def get_chapters_urls(chapter_numbers):
@@ -24,6 +26,16 @@ def get_chapters_urls(chapter_numbers):
     print("URLs that will be parsed:")
     for chapter_number in chapter_numbers:
         urls = f'{URL}{chapter_number}'
+        list_of_urls.append(urls)
+        print(urls)
+    return list_of_urls
+
+
+def get_chapters_for_custom_urls(chapter_numbers, season_number, episode_numbers):
+    list_of_urls = []
+    print("URLs that will be parsed:")
+    for chapter_number, episode_number in zip(chapter_numbers, episode_numbers):
+        urls = f'{URL}chapitre-{chapter_number}-saison-{season_number}-ep-{episode_number}'
         list_of_urls.append(urls)
         print(urls)
     return list_of_urls
@@ -99,7 +111,7 @@ def request_for_urls_checks(url):
         images_urls = request_for_urls_without_cloudflare(url)
         return images_urls
     if INPUTS[SELECT_MANGA][2] == "selenium_flaresolverr":
-        images_urls = request_for_urls_with_cloudflare(url)
+        images_urls = retrieve_imgs_urls_with_selenium(url)
         return images_urls
 
 
@@ -129,13 +141,16 @@ def curl_images_from_urls_without_selenium(urls, full_paths):
                     image['class']
                 except KeyError:
                     continue
-                if image['class'][0].startswith(INPUTS[SELECT_MANGA][1]) is True:
-                    # image['class'][1].startswith(INPUTS[SELECT_MANGA][1]) is True or \
-                    # image['class'][2].startswith(INPUTS[SELECT_MANGA][1]) is True:
-                    fullfilename = os.path.join(f"{path}/", f"{str(index_path).zfill(3)}.jpg")
-                    request_for_images_checks(image, fullfilename)
-                    print(image['src'])
-                    print(f"{image['src'].rsplit('/', 1)[-1]} downloaded and renamed to {fullfilename.rsplit('/', 1)[-1]}")
+                try:
+                    if image['class'][0].startswith(INPUTS[SELECT_MANGA][1]) is True or \
+                            image['class'][1].startswith(INPUTS[SELECT_MANGA][1]) is True or \
+                            image['class'][2].startswith(INPUTS[SELECT_MANGA][1]) is True:
+                        fullfilename = os.path.join(f"{path}/", f"{str(index_path).zfill(3)}.jpg")
+                        request_for_images_checks(image, fullfilename)
+                        print(
+                            f"{image['src'].rsplit('/', 1)[-1]} downloaded and renamed to {fullfilename.rsplit('/', 1)[-1]}")
+                except IndexError:
+                    continue
             print("\n")
             list_urls.remove(url)
             break
@@ -161,20 +176,18 @@ def curl_images_from_urls_with_selenium(urls, full_paths):
                     image['class']
                 except KeyError:
                     continue
-                try:
-                    if image['class'][0].startswith(INPUTS[SELECT_MANGA][1]) is True:
-                        # image['class'][1].startswith(INPUTS[SELECT_MANGA][1]) is True or \
-                        # image['class'][2].startswith(INPUTS[SELECT_MANGA][1]) is True:
-                        fullfilename = os.path.join(f"{path}/", f"{str(index_path).zfill(3)}.jpg")
-                        list_images_urls.append(image[CLASS_SRC_NAME])
-                        print(f"{image[CLASS_SRC_NAME].rsplit('/', 1)[-1]} downloading...")
-                except KeyError:
-                    launch_selenium(path, list_images_urls)
-                    print("All images downloaded")
-                    list_images_urls = []
-                    print("\n")
-                    list_urls.remove(url)
-                    break
+                if image['class'][0].startswith(INPUTS[SELECT_MANGA][1]) is True and len(image['class']) == 1:
+                # if image['class'][0].startswith(INPUTS[SELECT_MANGA][1]) is True:
+                    # image['class'][1].startswith(INPUTS[SELECT_MANGA][1]) is True or \
+                    # image['class'][2].startswith(INPUTS[SELECT_MANGA][1]) is True:
+                    fullfilename = os.path.join(f"{path}/", f"{str(index_path).zfill(3)}.jpg")
+                    list_images_urls.append(image[CLASS_SRC_NAME].replace("\t\t\t\n\t\t\t", ""))
+                    print(f"{image[CLASS_SRC_NAME].rsplit('/', 1)[-1]} downloading...")
+            launch_selenium(path, list_images_urls)
+            print("All images downloaded")
+            list_images_urls = []
+            print("\n")
+            list_urls.remove(url)
             break
 
 
@@ -193,10 +206,11 @@ def launch_selenium(path, list_images_urls):
     text_area = browser.find_element(By.ID, "txtin")
     text_area.send_keys(Keys.COMMAND, 'v')
     browser.find_element(By.ID, "btnDL").click()
+    time.sleep(2)
 
     seconds = 0
     dl_wait = True
-    while dl_wait and seconds < 20:
+    while dl_wait and seconds < 30:
         time.sleep(1)
         dl_wait = False
         files = os.listdir(path)
@@ -206,3 +220,21 @@ def launch_selenium(path, list_images_urls):
                 dl_wait = True
 
         seconds += 1
+
+
+def retrieve_imgs_urls_with_selenium(url):
+    # chrome_options = Options()
+    # webdriver_service = Service(f"{WEBDRIVER_DIR}chromedriver")
+    # browser = webdriver.Chrome(service=webdriver_service, options=chrome_options)
+    #
+    # browser.get("https://mangas-origines.fr/manga/tower-of-gods/chapitre-3-saison-1-ep-2/")
+    # html = browser.page_source
+    # print(html)
+
+    chrome_options_uc = uc.ChromeOptions()
+    driver = uc.Chrome(options=chrome_options_uc, version_main=107, use_subprocess=True)
+    driver.get(url)
+    time.sleep(4)
+    html = driver.page_source
+    soup = BSHTML(html, 'html.parser')
+    return soup.findAll('img')
