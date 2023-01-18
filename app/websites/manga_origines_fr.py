@@ -43,9 +43,6 @@ def curl_images_from_urls_without_selenium(urls, full_paths):
                     continue
                 try:
                     if image['class'][0].startswith(INPUTS[SELECT_MANGA][1]) is True and len(image['class']) == 1:
-                        # if image['class'][0].startswith(INPUTS[SELECT_MANGA][1]) is True or \
-                        #         image['class'][1].startswith(INPUTS[SELECT_MANGA][1]) is True or \
-                        #         image['class'][2].startswith(INPUTS[SELECT_MANGA][1]) is True:
                         fullfilename = os.path.join(f"{path}/", f"{str(index_path).zfill(3)}.jpg")
                         requests_images(image[CLASS_SRC_NAME].replace("\t\t\t\n\t\t\t", ""), fullfilename)
                         print(
