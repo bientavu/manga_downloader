@@ -2,5 +2,6 @@
 *.tmp
 .DS_Store
 chapters
+chapters_cbz/*
 RAW
 __pycache__
