@@ -58,7 +58,7 @@ def count_number_of_dirs():
     return full_paths
 
 
-def request_for_urls_with_cloudfare(url):
+def request_for_urls_with_cloudflare(url):
     json_data = {
         'cmd': 'request.get',
         'url': url,
@@ -71,7 +71,7 @@ def request_for_urls_with_cloudfare(url):
     return soup.findAll('img')
 
 
-def request_for_images_with_cloudfare(image, fullfilename):
+def request_for_images_with_cloudflare(image, fullfilename):
     json_data_image_request = {
         'cmd': 'request.get',
         'url': f"{image['src'][1:]}",
@@ -84,30 +84,30 @@ def request_for_images_with_cloudfare(image, fullfilename):
                 f.write(chunk)
 
 
-def request_for_urls_without_cloudfare(url):
+def request_for_urls_without_cloudflare(url):
     page = urllib.request.urlopen(url)
     soup = BSHTML(page, 'html.parser')
     return soup.findAll('img')
 
 
-def request_for_images_without_cloudfare(image, fullfilename):
+def request_for_images_without_cloudflare(image, fullfilename):
     urllib.request.urlretrieve(image['src'], fullfilename)
 
 
 def request_for_urls_checks(url):
     if INPUTS[SELECT_MANGA][2] == "no_selenium":
-        images_urls = request_for_urls_without_cloudfare(url)
+        images_urls = request_for_urls_without_cloudflare(url)
         return images_urls
     if INPUTS[SELECT_MANGA][2] == "selenium_flaresolverr":
-        images_urls = request_for_urls_with_cloudfare(url)
+        images_urls = request_for_urls_with_cloudflare(url)
         return images_urls
 
 
 def request_for_images_checks(image, fullfilename):
     if INPUTS[SELECT_MANGA][2] == "no_selenium":
-        request_for_images_without_cloudfare(image, fullfilename)
+        request_for_images_without_cloudflare(image, fullfilename)
     if INPUTS[SELECT_MANGA][2] == "selenium_flaresolverr":
-        request_for_images_with_cloudfare(image, fullfilename)
+        request_for_images_with_cloudflare(image, fullfilename)
 
 
 def curl_images_from_urls_without_selenium(urls, full_paths):
