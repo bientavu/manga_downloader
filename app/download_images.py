@@ -3,8 +3,7 @@ import urllib
 import urllib.request
 
 from bs4 import BeautifulSoup as BSHTML
-from constants import URL
-from constants import PARENT_DIR
+from constants import URL, WORKING_DIR, CHAPTER_ZERO, CHAPTER_FROM, CHAPTER_TO
 
 
 def get_chapters_urls(chapter_numbers):
@@ -19,31 +18,44 @@ def get_chapters_urls(chapter_numbers):
 
 
 def create_folders(chapter_numbers):
-    if os.path.isdir(PARENT_DIR):
+    if os.path.isdir(WORKING_DIR):
         print("Chapters folder already created. Skipping... \n")
     else:
-        os.mkdir(PARENT_DIR)
+        os.mkdir(WORKING_DIR)
         print("Chapters folder created. \n")
-    directories = list(range(len(chapter_numbers)))
+    directories = list(range(CHAPTER_FROM, CHAPTER_TO + 1))
     for directory in directories:
         try:
-            path = os.path.join(PARENT_DIR, str(directory).zfill(3))
+            path = os.path.join(WORKING_DIR, str(directory).zfill(3))
             os.mkdir(path)
         except FileExistsError:
             continue
 
 
+def count_number_of_dirs():
+    number_of_dirs = 0
+    for base, dirs, files in os.walk(WORKING_DIR):
+        for _ in dirs:
+            number_of_dirs += 1
+    list_number_of_dirs = list(range(CHAPTER_FROM, CHAPTER_TO + 1))
+    full_paths = []
+    for n in list_number_of_dirs:
+        url = f'{WORKING_DIR}{str(n).zfill(3)}'
+        full_paths.append(url)
+
+    return full_paths
+
+
 def curl_images_from_urls(urls, full_paths):
     number_of_dirs = 0
-    for base, dirs, files in os.walk(PARENT_DIR):
+    for base, dirs, files in os.walk(WORKING_DIR):
         for _ in dirs:
             number_of_dirs += 1
     print(f"\n")
     print(f"Number of chapter folders created: {number_of_dirs} \n")
     list_urls = list(urls)
     for path in full_paths:
-        index_path = full_paths.index(path)
-        print(f"### Downloading images for chapter n°{index_path}...")
+        print(f"### Downloading images for chapter n°{path[-3:]}...")
         for url in list_urls:
             page = urllib.request.urlopen(url)
             soup = BSHTML(page, 'html.parser')
@@ -61,17 +73,3 @@ def curl_images_from_urls(urls, full_paths):
             print("\n")
             list_urls.remove(url)
             break
-
-
-def count_number_of_dirs():
-    number_of_dirs = 0
-    for base, dirs, files in os.walk(PARENT_DIR):
-        for _ in dirs:
-            number_of_dirs += 1
-    list_number_of_dirs = list(range(number_of_dirs))
-    full_paths = []
-    for n in list_number_of_dirs:
-        url = f'{PARENT_DIR}{str(n).zfill(3)}'
-        full_paths.append(url)
-
-    return full_paths
