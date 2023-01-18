@@ -1,11 +1,21 @@
 import os
 import json
+import time
 import urllib
 import urllib.request
 import requests
+import pyperclip
 
 from bs4 import BeautifulSoup as BSHTML
-from constants import URL, WORKING_DIR, CHAPTER_FROM, CHAPTER_TO, INPUTS, SELECT_MANGA
+
+from variables import URL, WORKING_DIR, CHAPTER_FROM, CHAPTER_TO, INPUTS, SELECT_MANGA, EXTENSION_DIR, WEBDRIVER_DIR, \
+    EXTENSION_URL, CLASS_SRC_NAME
+
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 
 
 def get_chapters_urls(chapter_numbers):
@@ -19,7 +29,7 @@ def get_chapters_urls(chapter_numbers):
     return list_of_urls
 
 
-def create_folders(chapter_numbers):
+def create_folders():
     if os.path.isdir(WORKING_DIR):
         print("Chapters folder already created. Skipping... \n")
     else:
@@ -46,36 +56,6 @@ def count_number_of_dirs():
         full_paths.append(url)
 
     return full_paths
-
-
-# def curl_images_from_urls(urls, full_paths):
-#     number_of_dirs = 0
-#     for base, dirs, files in os.walk(WORKING_DIR):
-#         for _ in dirs:
-#             number_of_dirs += 1
-#     print(f"\n")
-#     print(f"Number of chapter folders created: {number_of_dirs} \n")
-#     list_urls = list(urls)
-#     for path in full_paths:
-#         print(f"### Downloading images for chapter n°{path[-3:]}...")
-#         for url in list_urls:
-#             page = urllib.request.urlopen(url)
-#             soup = BSHTML(page, 'html.parser')
-#             images = soup.findAll('img')
-#             for image in list(images):
-#                 index_path = images.index(image)
-#                 try:
-#                     image['class']
-#                 except KeyError:
-#                     continue
-#                 if image['class'][0] == 'alignnone':
-#                     fullfilename = os.path.join(f"{path}/", f"{str(index_path).zfill(3)}.jpg")
-#                     urllib.request.urlretrieve(image['src'], fullfilename)
-#                     print(
-#                         f"{image['src'].rsplit('/', 1)[-1]} downloaded and renamed to {fullfilename.rsplit('/', 1)[-1]}")
-#             print("\n")
-#             list_urls.remove(url)
-#             break
 
 
 def request_for_urls_with_cloudfare(url):
@@ -115,28 +95,28 @@ def request_for_images_without_cloudfare(image, fullfilename):
 
 
 def request_for_urls_checks(url):
-    if INPUTS[SELECT_MANGA][2] == "No":
+    if INPUTS[SELECT_MANGA][2] == "no_selenium":
         images_urls = request_for_urls_without_cloudfare(url)
         return images_urls
-    if INPUTS[SELECT_MANGA][2] == "Yes":
+    if INPUTS[SELECT_MANGA][2] == "selenium_flaresolverr":
         images_urls = request_for_urls_with_cloudfare(url)
         return images_urls
 
 
 def request_for_images_checks(image, fullfilename):
-    if INPUTS[SELECT_MANGA][2] == "No":
+    if INPUTS[SELECT_MANGA][2] == "no_selenium":
         request_for_images_without_cloudfare(image, fullfilename)
-    if INPUTS[SELECT_MANGA][2] == "Yes":
+    if INPUTS[SELECT_MANGA][2] == "selenium_flaresolverr":
         request_for_images_with_cloudfare(image, fullfilename)
 
 
-def curl_images_from_urls(urls, full_paths):
+def curl_images_from_urls_without_selenium(urls, full_paths):
     number_of_dirs = 0
     for base, dirs, files in os.walk(WORKING_DIR):
         for _ in dirs:
             number_of_dirs += 1
     print(f"\n")
-    print(f"Manga selected for download is : {SELECT_MANGA} \n")
+    print(f"Manga selected for download is: {SELECT_MANGA} \n")
     print(f"Number of chapter folders created: {number_of_dirs} \n")
     list_urls = list(urls)
     for path in full_paths:
@@ -149,12 +129,80 @@ def curl_images_from_urls(urls, full_paths):
                     image['class']
                 except KeyError:
                     continue
-                if image['class'][0] == INPUTS[SELECT_MANGA][1]:
+                if image['class'][0].startswith(INPUTS[SELECT_MANGA][1]) is True:
+                    # image['class'][1].startswith(INPUTS[SELECT_MANGA][1]) is True or \
+                    # image['class'][2].startswith(INPUTS[SELECT_MANGA][1]) is True:
                     fullfilename = os.path.join(f"{path}/", f"{str(index_path).zfill(3)}.jpg")
                     request_for_images_checks(image, fullfilename)
-                    print(
-                        f"{image['src'].rsplit('/', 1)[-1]} downloaded and renamed to {fullfilename.rsplit('/', 1)[-1]}"
-                    )
+                    print(image['src'])
+                    print(f"{image['src'].rsplit('/', 1)[-1]} downloaded and renamed to {fullfilename.rsplit('/', 1)[-1]}")
             print("\n")
             list_urls.remove(url)
             break
+
+
+def curl_images_from_urls_with_selenium(urls, full_paths):
+    number_of_dirs = 0
+    for base, dirs, files in os.walk(WORKING_DIR):
+        for _ in dirs:
+            number_of_dirs += 1
+    print(f"\n")
+    print(f"Manga selected for download is: {SELECT_MANGA} \n")
+    print(f"Number of chapter folders created: {number_of_dirs} \n")
+    list_urls = list(urls)
+    list_images_urls = []
+    for path in full_paths:
+        print(f"### Downloading images for chapter n°{path[-3:]}...")
+        for url in list_urls:
+            images_urls = request_for_urls_checks(url)
+            for image in list(images_urls):
+                index_path = images_urls.index(image)
+                try:
+                    image['class']
+                except KeyError:
+                    continue
+                try:
+                    if image['class'][0].startswith(INPUTS[SELECT_MANGA][1]) is True:
+                        # image['class'][1].startswith(INPUTS[SELECT_MANGA][1]) is True or \
+                        # image['class'][2].startswith(INPUTS[SELECT_MANGA][1]) is True:
+                        fullfilename = os.path.join(f"{path}/", f"{str(index_path).zfill(3)}.jpg")
+                        list_images_urls.append(image[CLASS_SRC_NAME])
+                        print(f"{image[CLASS_SRC_NAME].rsplit('/', 1)[-1]} downloading...")
+                except KeyError:
+                    launch_selenium(path, list_images_urls)
+                    print("All images downloaded")
+                    list_images_urls = []
+                    print("\n")
+                    list_urls.remove(url)
+                    break
+            break
+
+
+def launch_selenium(path, list_images_urls):
+    chrome_options = Options()
+    chrome_options.add_extension(f"{EXTENSION_DIR}extension_to_dl_via_selenium.crx")
+    download_directory = {"download.default_directory": path}
+    chrome_options.add_experimental_option("prefs", download_directory)
+    webdriver_service = Service(f"{WEBDRIVER_DIR}chromedriver")
+    browser = webdriver.Chrome(service=webdriver_service, options=chrome_options)
+
+    browser.get(EXTENSION_URL)
+    edit_button = browser.find_element(By.ID, "editbtn")
+    edit_button.click()
+    pyperclip.copy("\n".join(list_images_urls))
+    text_area = browser.find_element(By.ID, "txtin")
+    text_area.send_keys(Keys.COMMAND, 'v')
+    browser.find_element(By.ID, "btnDL").click()
+
+    seconds = 0
+    dl_wait = True
+    while dl_wait and seconds < 20:
+        time.sleep(1)
+        dl_wait = False
+        files = os.listdir(path)
+
+        for fname in files:
+            if fname.endswith('.crdownload') or fname.startswith('.com'):
+                dl_wait = True
+
+        seconds += 1
