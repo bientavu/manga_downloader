@@ -64,7 +64,7 @@ INPUTS = {
 
 
 # VARIABLES
-SELECT_MANGA = "tomb-raider-king"
+SELECT_MANGA = "the-player-that-cant-level-up"
 CHAPTER_FROM = 1
 CHAPTER_TO = 2
 SEASON_NUMBER = 1
