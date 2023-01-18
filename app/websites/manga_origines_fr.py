@@ -6,7 +6,7 @@ from variables_and_constants import WORKING_DIR, URL, SELECT_MANGA, INPUTS, CLAS
 
 
 def get_chapters_urls(chapter_numbers):
-    chapter_numbers = chapter_numbers
+    chapter_numbersd = chapter_numbers
     list_of_urls = []
     print("URLs that will be parsed:")
     for chapter_number in chapter_numbers:
