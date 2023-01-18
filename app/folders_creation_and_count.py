@@ -1,5 +1,5 @@
 import os
-from variables_and_constants import WORKING_DIR, CHAPTER_TO, CHAPTER_FROM
+from variables_and_constants import WORKING_DIR, CHAPTER_TO, CHAPTER_FROM, EPISODE_FROM, EPISODE_TO
 
 
 def create_folders():
