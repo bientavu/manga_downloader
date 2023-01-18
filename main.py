@@ -2,7 +2,7 @@ from app.download_images import get_chapters_urls, create_folders, count_number_
     curl_images_from_urls_with_selenium, curl_images_from_urls_without_selenium
 from app.merge_images import create_folders_and_files_name_dict, zip_chapters, \
     create_chapters_path_list, change_extension_to_cbz, rm_work_dir
-from variables import CHAPTER_NUMBERS, INPUTS, SELECT_MANGA
+from variables_and_constants import CHAPTER_NUMBERS, INPUTS, SELECT_MANGA
 
 create_folders()
 chapters_urls = get_chapters_urls(CHAPTER_NUMBERS)
