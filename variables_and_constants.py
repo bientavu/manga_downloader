@@ -11,7 +11,7 @@ INPUTS = {
         "manga_origines_fr"
     ],
     "the-player-that-cant-level-up": [
-        "https://reaperscans.fr/serie/the-player-that-can-t-level-up/chapitre-",
+        "https://reaperscans.fr/serie/the-player-who-can-t-level-up/chapitre-",
         "wp-manga-chapter-img",
         "reaperscans_fr"
     ],
