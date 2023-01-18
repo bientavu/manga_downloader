@@ -2,9 +2,8 @@ import os
 import glob
 import shutil
 
-from constants import WORKING_DIR, OUTPUT_CBZ_DIR
+from variables import WORKING_DIR, OUTPUT_CBZ_DIR
 from pathlib import Path
-# from PIL import Image
 
 
 def create_folders_and_files_name_dict():

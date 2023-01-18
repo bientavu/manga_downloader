@@ -5,3 +5,4 @@ chapters
 chapters_cbz/*
 RAW
 __pycache__
+.env.local
