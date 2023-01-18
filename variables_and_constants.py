@@ -8,42 +8,42 @@ INPUTS = {
     "overgeared": [
         "https://mangas-origines.fr/manga/overgeared-remake/chapitre-",
         "wp-manga-chapter-img",
-        "https://mangas-origines.fr"
+        "manga_origines_fr"
     ],
     "the-player-that-cant-level-up": [
         "https://reaperscans.fr/serie/the-player-that-can-t-level-up/chapitre-",
         "wp-manga-chapter-img",
-        "https://reaperscans.fr"
+        "reaperscans_fr"
     ],
     "second-life-ranker": [
         "https://www.pantheon-scan.fr/second-life-ranker-",
         "wp-image",
-        "https://www.pantheon-scan.fr"
+        "pantheon_scan_fr"
     ],
     "black-haze": [
         "https://www.mangascantrad.fr/manga/black-haze/chapitre-",
         "wp-manga-chapter-img",
-        "https://www.mangascantrad.fr"
+        "mangascantrad_fr"
     ],
     "a-returners-magic-should-be-special": [
         "https://www.pantheon-scan.fr/a-returners-magic-should-be-special-chapitre-",
         "wp-image",
-        "https://www.pantheon-scan.fr"
+        "pantheon_scan_fr"
     ],
     "the-beginning-after-the-end": [
         "https://www.pantheon-scan.fr/the-beginning-after-the-end-chapitre-",
         "wp-image",
-        "the-beginning-after-the-end"
+        "pantheon_scan_fr"
     ],
     "tower-of-god": [
         "https://mangas-origines.fr/manga/tower-of-gods/",
         "wp-manga-chapter-img",
-        "https://mangas-origines.fr"
+        "manga_origines_fr"
     ],
     "nano-machine": [
         "https://mangas-origines.fr/manga/1-nano-machine/chapitre-",
         "wp-manga-chapter-img",
-        "https://mangas-origines.fr"
+        "manga_origines_fr"
     ],
     "tomb-raider-king": [
         "https://mangas-origines.fr/manga/12-tomb-raider-king/chapitre-",
@@ -53,7 +53,7 @@ INPUTS = {
     "lecteur-omniscient": [
         "https://mangas-origines.fr/manga/lecteur-omniscient/chapitre-",
         "wp-manga-chapter-img",
-        "https://mangas-origines.fr"
+        "manga_origines_fr"
     ],
     "lexpert-de-la-tour-tutoriel": [
         "https://mangas-origines.fr/manga/lexpert-de-la-tour-tutoriel/chapitre-",

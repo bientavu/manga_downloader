@@ -1,4 +1,4 @@
-# - Manga DownOFF -
+# - Manga DownOFF V3 -
 :bangbang: This is a Work In Progress project, some stuff might break/not work properly :bangbang:
 
 ## Description
@@ -9,6 +9,17 @@ a WIP project, feel free to contribute to the project
 if you want. It was only a personal tool for me to download the
 chapters of my favorites mangas/webtoons in order to have them 
 offline and be able to read them in the metro, plane, etc...
+
+## V3 Patch Notes
+
+- Full refacto of the script files: folders creations, images merging
+and selenium are in separate modules. Each new website you would like to
+scrap now needs to create a separate module inside `/app/websites/`.
+- I decided to separate the websites scraping script into modules because the mechanic 
+can be really different from one website to another.
+- It now always uses selenium to get the images URLs, and uses requests method
+to download the images. This is the best way I found to bypass cloudflare protections.
+- I have updated the inputs in the readme because it has changed a little bit.
 
 ## Steps of the script
 1. With a given scan URL (for example https://www.pantheon-scan.fr/overgeared-chapitre-),
@@ -35,43 +46,30 @@ for the chapter has their own class.
 because sometimes, the file names are totally random. This leads
 to a chapter that have the images in disorder.
 
-### Downloading images: an easy way & a tricky one
-The script downloads the images in a batch with a list of URLs that 
-has been retrieved (with urllib request), **this is the easy way**.
+### Downloading images: Selenium + requests method
 
-Unfortunately, some websites has a cloudflare
-protection with captcha that totally block us from downloading the
-images in a batch. It is possible to fake a browser in the request
-function, but honestly, it never worked for me... I always faced 403 errors.
-To overcome this issue, I put in place a [Selenium](https://selenium-python.readthedocs.io/) function that will
-launch a real Chrome browser. The URLs list is pasted into a Chrome
-extension that automatically downloads all the images, **this is the
-tricky one**. [FlareSolverr](https://github.com/FlareSolverr/FlareSolverr)
-is also needed to retreive URLs images. I put the docker command in the requirements.
+To explain, it first uses [Selenium](https://selenium-python.readthedocs.io/)
+to get to the chapter page where I retrieve all the images of the chapter
+into a list.
 
-
-⚠️ Be careful, this method is actually faster but
-I couldn't find an easy way to rename the files while they are being
-downloaded. This means that if the filenames of the images are not
-already in order, the chapter order will be messed up. Make sure that
-it's in order, or find a way to improve my script ⚠️
+Then it uses a request method to download images one by one using a referer
+in the header in order to bypass the cloudflare protection that shows a 403
+forbidden.
 
 ## Inputs
 To add your manga/webtoon, insert it into the INPUTS dictionary inside `variables_and_constants.py`.
 How it works:
 ```
 {
-    \\ With Selenium not selected
     "name_of_your_manga_1": [
         "url_of_your_manga_1",
         "target_image_class",
-        "no_selenium"
+        "website_module_name"
     ],
-    \\ With Selenium and Cloudflare selected
     "name_of_your_manga_2": [
         "url_of_your_manga_2",
         "target_image_class",
-        "selenium_flaresolverr"
+        "website_module_name"
     ]
 }
 ```
@@ -93,7 +91,10 @@ In `variables_and_constants.py`
 
 
 ## Requirements
-### FlareSolverr with Docker
+
+Install all the dependencies stored in requirements.txt
+
+### FlareSolverr with Docker (NOT NEEDED FOR V3)
 In order to get the full list of images URLs when Cloudflare is present,
 you'll need to start a docker with [FlareSolverr](https://github.com/FlareSolverr/FlareSolverr).
 To do so this simple command line will do the job:
@@ -101,7 +102,7 @@ To do so this simple command line will do the job:
 `docker run -p 8191:8191 -e LOG_LEVEL=info -e CAPTCHA_SOLVER=hcaptcha-solver ghcr.io/flaresolverr/flaresolverr:latest`
 
 ### Selenium
-The [WebDriver for Chrome](https://chromedriver.chromium.org/getting-started) is mandatory when using the tricky method.
+The [WebDriver for Chrome](https://chromedriver.chromium.org/getting-started) is mandatory.
 You can follow the instruction on the website to install it, it's easy. Then, just copy/paste the full path
 of the executable in the `WEBDRIVER_DIR` variable.
 
