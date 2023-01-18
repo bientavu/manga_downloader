@@ -3,8 +3,6 @@ import urllib
 import urllib.request
 
 from bs4 import BeautifulSoup as BSHTML
-from pprint import pprint
-
 from constants import URL
 from constants import PARENT_DIR
 
@@ -29,7 +27,7 @@ def create_folders(chapter_numbers):
     directories = list(range(len(chapter_numbers)))
     for directory in directories:
         try:
-            path = os.path.join(PARENT_DIR, str(directory))
+            path = os.path.join(PARENT_DIR, str(directory).zfill(3))
             os.mkdir(path)
         except FileExistsError:
             continue
@@ -73,7 +71,7 @@ def count_number_of_dirs():
     list_number_of_dirs = list(range(number_of_dirs))
     full_paths = []
     for n in list_number_of_dirs:
-        url = f'{PARENT_DIR}/{n}'
+        url = f'{PARENT_DIR}{str(n).zfill(3)}'
         full_paths.append(url)
 
     return full_paths
