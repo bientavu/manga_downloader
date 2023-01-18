@@ -2,7 +2,7 @@ import os
 import glob
 import shutil
 
-from variables import WORKING_DIR, OUTPUT_CBZ_DIR
+from variables_and_constants import WORKING_DIR, OUTPUT_CBZ_DIR
 from pathlib import Path
 
 
