@@ -48,7 +48,7 @@ INPUTS = {
     "tomb-raider-king": [
         "https://mangas-origines.fr/manga/12-tomb-raider-king/chapitre-",
         "wp-manga-chapter-img",
-        "https://mangas-origines.fr"
+        "manga_origines_fr"
     ],
     "lecteur-omniscient": [
         "https://mangas-origines.fr/manga/lecteur-omniscient/chapitre-",
@@ -58,7 +58,7 @@ INPUTS = {
     "lexpert-de-la-tour-tutoriel": [
         "https://mangas-origines.fr/manga/lexpert-de-la-tour-tutoriel/chapitre-",
         "wp-manga-chapter-img",
-        "https://mangas-origines.fr"
+        "manga_origines_fr"
     ]
 }
 
@@ -66,11 +66,11 @@ INPUTS = {
 # VARIABLES
 SELECT_MANGA = "tomb-raider-king"
 CHAPTER_FROM = 1
-CHAPTER_TO = 10
-CLASS_SRC_NAME = "src"
+CHAPTER_TO = 2
 SEASON_NUMBER = 1
 EPISODE_FROM = 32
 EPISODE_TO = 32
+CLASS_SRC_NAME = "src"
 
 # Needs to be changed in .env
 WORKING_DIR = os.getenv('WORKING_DIR')
