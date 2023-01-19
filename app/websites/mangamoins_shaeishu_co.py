@@ -1,6 +1,8 @@
 import os
 import re
 import time
+from itertools import product
+
 import requests
 import undetected_chromedriver as uc
 from bs4 import BeautifulSoup as BSHTML
@@ -46,57 +48,28 @@ def curl_images_from_urls_without_selenium(urls, full_paths):
     print(f"Number of chapter folders created: {number_of_dirs} \n")
     list_urls = list(urls)
     for path in full_paths:
-        print(f"### Downloading images for chapter n°{path[-3:]}...")
         for url in list_urls:
             images_urls = retrieve_imgs_urls_with_selenium(url)
             for chapter in CHAPTER_NUMBERS:
+                print(f"### Downloading images for chapter n°{chapter}...")
                 manga_name = images_urls[0][2]["src"].split('/')[3].strip()
                 manga_name = re.sub('[^a-zA-Z]+', '', manga_name)
                 page_counter = images_urls[1][:-1]
                 page_counter = page_counter[-2:]
-                for page in range(1, int(page_counter)):
+                for page in [f"{page:02}" for page in range(1, int(page_counter))]:
                     build_url = f"https://mangamoins.shaeishu.co/files/scans/{manga_name}{chapter}/{page}.png"
                     fullfilename = os.path.join(f"{path}/", f"{str(page).zfill(3)}.jpg")
                     requests_images(build_url, fullfilename)
+                    print(
+                        f"{page}.png downloaded and renamed to {fullfilename.rsplit('/', 1)[-1]}")
             print("\n")
             list_urls.remove(url)
             break
 
 
-
-
-
-
-#
-# def curl_images_from_urls_without_selenium(urls, full_paths):
-#     number_of_dirs = 0
-#     for base, dirs, files in os.walk(WORKING_DIR):
-#         for _ in dirs:
-#             number_of_dirs += 1
-#     print(f"\n")
-#     print(f"Manga selected for download is: {SELECT_MANGA} \n")
-#     print(f"Number of chapter folders created: {number_of_dirs} \n")
-#     list_urls = list(urls)
-#     for path in full_paths:
-#         print(f"### Downloading images for chapter n°{path[-3:]}...")
-#         for url in list_urls:
-#             images_urls = retrieve_imgs_urls_with_selenium(url)
-#             page_counter = images_urls[1][:-1]
-#             page_counter = page_counter[-2:]
-#             for image in list(images_urls):
-#                 index_path = images_urls.index(image)
-#                 try:
-#                     image['class']
-#                 except KeyError:
-#                     continue
-#                 try:
-#                     if image['class'][0].startswith(INPUTS[SELECT_MANGA][1]) is True and len(image['class']) == 1:
-#                         fullfilename = os.path.join(f"{path}/", f"{str(index_path).zfill(3)}.jpg")
-#                         requests_images(image[CLASS_SRC_NAME].replace("\t\t\t\n\t\t\t", ""), fullfilename)
-#                         print(
-#                             f"{image['src'].rsplit('/', 1)[-1]} downloaded and renamed to {fullfilename.rsplit('/', 1)[-1]}")
-#                 except IndexError:
-#                     continue
-#             print("\n")
-#             list_urls.remove(url)
-#             break
+# def test():
+#     headers = {'referer': 'https://mangas-origines.fr/'}
+#     request = requests.post(
+#         'https://mangamoins.shaeishu.co/files/scans/jjk180/01.png',
+#         headers=headers)
+#     open('image3.jpg', 'wb').write(request.content)
