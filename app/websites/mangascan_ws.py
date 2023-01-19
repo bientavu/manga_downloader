@@ -16,8 +16,8 @@ from variables_and_constants import WORKING_DIR, URL, SELECT_MANGA, INPUTS, CLAS
 
 
 # Methods for this website:
-# - Request is working but is slow
-# - Selenium working and is fast
+# - Request is working and is fast
+# - Selenium not working because of cloudflare protection
 
 
 ##################################################
@@ -45,8 +45,8 @@ def retrieve_imgs_urls_with_selenium(url):
     driver.minimize_window()
     html = driver.page_source
     soup = BSHTML(html, 'html.parser')
-    page_counter = soup.find('p', {'id': 'pagecountertitle'})
-    return soup.findAll('img'), page_counter.text
+    page_counter = soup.findAll('span', {'class': 'text'})
+    return soup.findAll('img'), page_counter
 
 
 ##################################################
@@ -87,13 +87,17 @@ def launch_selenium(path, list_images_urls):
 ###            For requests method             ###
 ##################################################
 def requests_images(image_url, image_dl_path):
-    headers = {'referer': 'https://mangamoins.shaeishu.co/'}
+    headers = {
+        'referer': 'https://mangascan.ws/',
+        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) '
+                      'Chrome/109.0.0.0 Safari/537.36 '
+        }
     request = requests.post(image_url, headers=headers)
     open(image_dl_path, 'wb').write(request.content)
 
 
 ##################################################
-###      Downloading with selenium method      ###
+###      Downloading with requests method      ###
 ##################################################
 def download_images_from_urls(urls, full_paths):
     number_of_dirs = 0
@@ -104,53 +108,21 @@ def download_images_from_urls(urls, full_paths):
     print(f"Manga selected for download is: {SELECT_MANGA} \n")
     print(f"Number of chapter folders created: {number_of_dirs} \n")
     list_urls = list(urls)
-    list_images_urls = []
     for path in full_paths:
         for url in list_urls:
             images_urls = retrieve_imgs_urls_with_selenium(url)
             for chapter in CHAPTER_NUMBERS:
                 print(f"### Downloading images for chapter n°{chapter}...")
-                manga_name = images_urls[0][2]["src"].split('/')[3].strip()
-                manga_name = re.sub('[^a-zA-Z]+', '', manga_name)
-                page_counter = images_urls[1][:-1]
-                page_counter = page_counter[-2:]
-                for page in [f"{page:02}" for page in range(1, int(page_counter) + 1)]:
-                    build_url = f"https://mangamoins.shaeishu.co/files/scans/{manga_name}{chapter}/{page}.png"
-                    list_images_urls.append(build_url)
-            launch_selenium(path, list_images_urls)
+                manga_name = images_urls[0][2]["data-src"].split('/')[4].strip()
+                page_counter = images_urls[1][-1].contents[0]
+                for page in range(1, int(page_counter) + 1):
+                    build_url = f"https://scansmangas.ws/scans/{manga_name}/{chapter}/{page}.jpg"
+                    fullfilename = os.path.join(f"{path}/", f"{str(page).zfill(3)}.jpg")
+                    requests_images(build_url, fullfilename)
+                    print(f"{page}.jpg downloaded and renamed to {fullfilename.rsplit('/', 1)[-1]}")
+                CHAPTER_NUMBERS.remove(chapter)
+                break
             print("All images downloaded")
             print("\n")
             list_urls.remove(url)
             break
-
-
-##################################################
-###      Downloading with requests method      ###
-##################################################
-# def download_images_from_urls(urls, full_paths):
-#     number_of_dirs = 0
-#     for base, dirs, files in os.walk(WORKING_DIR):
-#         for _ in dirs:
-#             number_of_dirs += 1
-#     print(f"\n")
-#     print(f"Manga selected for download is: {SELECT_MANGA} \n")
-#     print(f"Number of chapter folders created: {number_of_dirs} \n")
-#     list_urls = list(urls)
-#     for path in full_paths:
-#         for url in list_urls:
-#             images_urls = retrieve_imgs_urls_with_selenium(url)
-#             for chapter in CHAPTER_NUMBERS:
-#                 print(f"### Downloading images for chapter n°{chapter}...")
-#                 manga_name = images_urls[0][2]["src"].split('/')[3].strip()
-#                 manga_name = re.sub('[^a-zA-Z]+', '', manga_name)
-#                 page_counter = images_urls[1][:-1]
-#                 page_counter = page_counter[-2:]
-#                 for page in [f"{page:02}" for page in range(1, int(page_counter))]:
-#                     build_url = f"https://mangamoins.shaeishu.co/files/scans/{manga_name}{chapter}/{page}.png"
-#                     fullfilename = os.path.join(f"{path}/", f"{str(page).zfill(3)}.jpg")
-#                     requests_images(build_url, fullfilename)
-#                     print(
-#                         f"{page}.png downloaded and renamed to {fullfilename.rsplit('/', 1)[-1]}")
-#             print("\n")
-#             list_urls.remove(url)
-#             break

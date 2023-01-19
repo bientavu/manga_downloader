@@ -5,9 +5,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # VARIABLES
-SELECT_MANGA = "one-piece"
-CHAPTER_FROM = 1061
-CHAPTER_TO = 1061
+SELECT_MANGA = "black-clover"
+CHAPTER_FROM = 150
+CHAPTER_TO = 165
 SEASON_NUMBER = 1
 EPISODE_FROM = 32
 EPISODE_TO = 32

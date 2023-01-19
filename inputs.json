@@ -58,5 +58,10 @@
         "https://mangamoins.shaeishu.co/?scan=OP",
         "wp-manga-chapter-img",
         "mangamoins_shaeishu_co"
+    ],
+    "black-clover": [
+        "https://mangascan.ws/manga/black-clover/",
+        "img-responsive scan-page",
+        "mangascan_ws"
     ]
 }
