@@ -17,7 +17,7 @@ def get_chapters_urls(chapter_numbers):
 
 
 def requests_images(image_url, image_dl_path):
-    headers = {'referer': 'https://mangas-origines.fr/'}
+    headers = {'referer': 'https://reaperscans.fr/'}
     request = requests.post(image_url, headers=headers)
     open(image_dl_path, 'wb').write(request.content)
 
