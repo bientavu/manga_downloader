@@ -1,17 +1,10 @@
 import os
 import time
-import pyperclip
 import requests
 import undetected_chromedriver as uc
 
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup as BSHTML
-from variables_and_constants import WORKING_DIR, URL, SELECT_MANGA, CHAPTER_NUMBERS, \
-    EXTENSION_DIR, WEBDRIVER_DIR, EXTENSION_URL
+from variables_and_constants import WORKING_DIR, URL, SELECT_MANGA, CHAPTER_NUMBERS
 
 
 # Methods for this website:
@@ -46,40 +39,6 @@ def retrieve_imgs_urls_with_selenium(url):
     soup = BSHTML(html, 'html.parser')
     page_counter = soup.findAll('span', {'class': 'text'})
     return soup.findAll('img'), page_counter
-
-
-##################################################
-###            For selenium method             ###
-##################################################
-def launch_selenium(path, list_images_urls):
-    chrome_options = Options()
-    chrome_options.add_extension(f"{EXTENSION_DIR}extension_to_dl_via_selenium.crx")
-    download_directory = {"download.default_directory": path}
-    chrome_options.add_experimental_option("prefs", download_directory)
-    webdriver_service = Service(f"{WEBDRIVER_DIR}chromedriver")
-    browser = webdriver.Chrome(service=webdriver_service, options=chrome_options)
-
-    browser.get(EXTENSION_URL)
-    edit_button = browser.find_element(By.ID, "editbtn")
-    edit_button.click()
-    pyperclip.copy("\n".join(list_images_urls))
-    text_area = browser.find_element(By.ID, "txtin")
-    text_area.send_keys(Keys.COMMAND, 'v')
-    browser.find_element(By.ID, "btnDL").click()
-    time.sleep(2)
-
-    seconds = 0
-    dl_wait = True
-    while dl_wait and seconds < 30:
-        time.sleep(1)
-        dl_wait = False
-        files = os.listdir(path)
-
-        for fname in files:
-            if fname.endswith('.crdownload') or fname.startswith('.com'):
-                dl_wait = True
-
-        seconds += 1
 
 
 ##################################################
