@@ -18,7 +18,8 @@ scrap now needs to create a separate module inside `/app/websites/`.
 - I decided to separate the websites scraping script into modules because the mechanic 
 can be really different from one website to another.
 - It now always uses selenium to get the images URLs, and uses requests method
-to download the images. This is the best way I found to bypass cloudflare protections.
+ OR Selenium to download the images. It depends on the website if it has
+a cloudflare protection or not when trying to download an image.
 - I have updated the inputs in the readme because it has changed a little bit.
 
 ## Steps of the script
