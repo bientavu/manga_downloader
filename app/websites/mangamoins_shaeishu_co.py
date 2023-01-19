@@ -11,7 +11,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup as BSHTML
-from variables_and_constants import WORKING_DIR, URL, SELECT_MANGA, INPUTS, CLASS_SRC_NAME, CHAPTER_NUMBERS, \
+from variables_and_constants import WORKING_DIR, URL, SELECT_MANGA, CHAPTER_NUMBERS, \
     EXTENSION_DIR, WEBDRIVER_DIR, EXTENSION_URL
 
 
