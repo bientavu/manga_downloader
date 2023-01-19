@@ -5,6 +5,14 @@ from app.selenium import retrieve_imgs_urls_with_selenium
 from variables_and_constants import WORKING_DIR, URL, SELECT_MANGA, INPUTS, CLASS_SRC_NAME
 
 
+# Methods for this website:
+# - Request is working but a bit slow
+# - Selenium not tested yet
+
+
+##################################################
+###                 Mandatory                  ###
+##################################################
 def get_chapters_urls(chapter_numbers):
     chapter_numbers = chapter_numbers
     list_of_urls = []
@@ -22,7 +30,7 @@ def requests_images(image_url, image_dl_path):
     open(image_dl_path, 'wb').write(request.content)
 
 
-def curl_images_from_urls_without_selenium(urls, full_paths):
+def download_images_from_urls(urls, full_paths):
     number_of_dirs = 0
     for base, dirs, files in os.walk(WORKING_DIR):
         for _ in dirs:

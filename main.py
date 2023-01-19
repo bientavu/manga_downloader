@@ -9,7 +9,7 @@ website_modules = importlib.import_module(f"app.websites.{INPUTS[SELECT_MANGA][2
 create_folders()
 chapters_urls = website_modules.get_chapters_urls(CHAPTER_NUMBERS)
 full_paths = count_number_of_dirs()
-website_modules.curl_images_from_urls_without_selenium(chapters_urls, full_paths)
+website_modules.download_images_from_urls(chapters_urls, full_paths)
 
 folders_and_files_name = create_folders_and_files_name_dict()
 chapters_path_list = create_chapters_path_list(folders_and_files_name)
