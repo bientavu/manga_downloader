@@ -4,6 +4,7 @@ import time
 import pyperclip
 import requests
 
+from sys import platform
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.keys import Keys
@@ -41,7 +42,8 @@ def get_chapters_urls(chapter_numbers):
 def retrieve_imgs_urls_with_selenium(url):
     driver = base_to_retrieve_imgs_urls_with_selenium(url)
     time.sleep(2)
-    driver.minimize_window()
+    if platform == "darwin":
+        driver.minimize_window()
     html = driver.page_source
     soup = BSHTML(html, 'html.parser')
     page_counter = soup.find('p', {'id': 'pagecountertitle'})
