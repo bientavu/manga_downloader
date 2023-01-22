@@ -1,15 +1,16 @@
 import os
 import time
 import requests
-import undetected_chromedriver as uc
 
+from sys import platform
 from bs4 import BeautifulSoup as BSHTML
-from variables_and_constants import WORKING_DIR, URL, SELECT_MANGA, CHAPTER_NUMBERS
+from app.selenium import base_to_retrieve_imgs_urls_with_selenium
+from variables_and_constants import WORKING_DIR, URL, SELECT_MANGA
 
 
 # Methods for this website:
 # - Request is working and is fast
-# - Selenium not working because of cloudflare protection
+# - Selenium batch donwload not working because of cloudflare protection
 
 
 ##################################################
@@ -30,10 +31,10 @@ def get_chapters_urls(chapter_numbers):
 ###                 Mandatory                  ###
 ##################################################
 def retrieve_imgs_urls_with_selenium(url):
-    chrome_options_uc = uc.ChromeOptions()
-    driver = uc.Chrome(options=chrome_options_uc, use_subprocess=True)
-    driver.get(url)
+    driver = base_to_retrieve_imgs_urls_with_selenium(url)
     time.sleep(2)
+    if platform == "darwin":
+        driver.minimize_window()
     driver.minimize_window()
     html = driver.page_source
     soup = BSHTML(html, 'html.parser')
@@ -69,17 +70,14 @@ def download_images_from_urls(urls, full_paths):
     for path in full_paths:
         for url in list_urls:
             images_urls = retrieve_imgs_urls_with_selenium(url)
-            for chapter in CHAPTER_NUMBERS:
-                print(f"### Downloading images for chapter n°{chapter}...")
-                manga_name = images_urls[0][2]["data-src"].split('/')[4].strip()
-                page_counter = images_urls[1][-1].contents[0]
-                for page in range(1, int(page_counter) + 1):
-                    build_url = f"https://scansmangas.ws/scans/{manga_name}/{chapter}/{page}.jpg"
-                    fullfilename = os.path.join(f"{path}/", f"{str(page).zfill(3)}.jpg")
-                    requests_images(build_url, fullfilename)
-                    print(f"{page}.jpg downloaded and renamed to {fullfilename.rsplit('/', 1)[-1]}")
-                CHAPTER_NUMBERS.remove(chapter)
-                break
+            print(f"### Downloading images for chapter n°{path.rsplit('/', 1)[-1]}...")
+            manga_name = images_urls[0][2]["data-src"].split('/')[4].strip()
+            page_counter = images_urls[1][-1].contents[0]
+            for page in range(1, int(page_counter) + 1):
+                build_url = f"https://scansmangas.ws/scans/{manga_name}/{path.rsplit('/', 1)[-1]}/{page}.jpg"
+                fullfilename = os.path.join(f"{path}/", f"{str(page).zfill(3)}.jpg")
+                requests_images(build_url, fullfilename)
+                print(f"{page}.jpg downloaded and renamed to {fullfilename.rsplit('/', 1)[-1]}")
             print("All images downloaded")
             print("\n")
             list_urls.remove(url)
