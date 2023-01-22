@@ -32,7 +32,7 @@ def get_chapters_urls(chapter_numbers):
 ##################################################
 def retrieve_imgs_urls_with_selenium(url):
     driver = base_to_retrieve_imgs_urls_with_selenium(url)
-    time.sleep(4)
+    time.sleep(2)
     if platform == "darwin":
         driver.minimize_window()
     html = driver.page_source

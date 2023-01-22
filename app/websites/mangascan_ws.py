@@ -35,7 +35,6 @@ def retrieve_imgs_urls_with_selenium(url):
     time.sleep(2)
     if platform == "darwin":
         driver.minimize_window()
-    driver.minimize_window()
     html = driver.page_source
     soup = BSHTML(html, 'html.parser')
     page_counter = soup.findAll('span', {'class': 'text'})
