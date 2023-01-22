@@ -5,9 +5,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # VARIABLES
-SELECT_MANGA = "black-clover"
-CHAPTER_FROM = 150
-CHAPTER_TO = 165
+SELECT_MANGA = "lecteur-omniscient"
+CHAPTER_FROM = 22
+CHAPTER_TO = 24
 SEASON_NUMBER = 1
 EPISODE_FROM = 32
 EPISODE_TO = 32
@@ -16,8 +16,8 @@ CLASS_SRC_NAME = "src"
 # Needs to be changed in .env
 WORKING_DIR = os.getenv('WORKING_DIR')
 OUTPUT_CBZ_DIR = os.getenv('OUTPUT_CBZ_DIR') + SELECT_MANGA + "/"
-EXTENSION_DIR = os.getenv('EXTENSION_DIR')
-WEBDRIVER_DIR = os.getenv('WEBDRIVER_DIR')
+EXTENSION_PATH = os.getenv('EXTENSION_PATH')
+WEBDRIVER_PATH = os.getenv('WEBDRIVER_PATH')
 
 # CONSTANTS
 INPUTS_JSON = open('inputs.json')

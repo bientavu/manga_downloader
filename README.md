@@ -87,8 +87,8 @@ In `variables_and_constants.py`
 | CLASS_SRC_NAME |      target_image_class      |      The target class associated with the images to download onlt them       |
 |  WORKING_DIR   |     PATH of working dir      | Full path of the working directory, will be deleted at the end of the script |
 | OUTPUT_CBZ_DIR |    PATH of CBZ output dir    |           Full path where the CBZ files will be stored at the end            |
-| EXTENSION_DIR  | PATH of chrome extension dir |             Full path where the .crz chrome extension is located             |
-| WEBDRIVER_DIR  | PATH of chrome webdriver dir |                      Full path of the chrome webdriver                       |
+| EXTENSION_PATH  | PATH of chrome extension dir |             Full path where the .crz chrome extension is located             |
+| WEBDRIVER_PATH  | PATH of chrome webdriver dir |                      Full path of the chrome webdriver                       |
 
 
 ## Requirements
@@ -105,7 +105,7 @@ To do so this simple command line will do the job:
 ### Selenium
 The [WebDriver for Chrome](https://chromedriver.chromium.org/getting-started) is mandatory.
 You can follow the instruction on the website to install it, it's easy. Then, just copy/paste the full path
-of the executable in the `WEBDRIVER_DIR` variable.
+of the executable in the `WEBDRIVER_PATH` variable.
 
 ## Reading advices
 ### Smartphones

@@ -11,8 +11,8 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup as BSHTML
-from variables_and_constants import WORKING_DIR, URL, SELECT_MANGA, CHAPTER_NUMBERS, \
-    EXTENSION_DIR, WEBDRIVER_DIR, EXTENSION_URL
+from variables_and_constants import WORKING_DIR, URL, SELECT_MANGA, \
+    CHAPTER_NUMBERS, EXTENSION_URL, EXTENSION_PATH, WEBDRIVER_PATH
 
 
 # Methods for this website:
@@ -54,10 +54,10 @@ def retrieve_imgs_urls_with_selenium(url):
 ##################################################
 def launch_selenium(path, list_images_urls):
     chrome_options = Options()
-    chrome_options.add_extension(f"{EXTENSION_DIR}extension_to_dl_via_selenium.crx")
+    chrome_options.add_extension(EXTENSION_PATH)
     download_directory = {"download.default_directory": path}
     chrome_options.add_experimental_option("prefs", download_directory)
-    webdriver_service = Service(f"{WEBDRIVER_DIR}chromedriver")
+    webdriver_service = Service(WEBDRIVER_PATH)
     browser = webdriver.Chrome(service=webdriver_service, options=chrome_options)
 
     browser.get(EXTENSION_URL)

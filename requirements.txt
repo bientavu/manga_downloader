@@ -5,3 +5,5 @@ pillow
 selenium
 python-dotenv
 pyperclip
+undetected_chromedriver
+pyvirtualdisplay
