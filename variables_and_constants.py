@@ -5,9 +5,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # VARIABLES
-SELECT_MANGA = "lecteur-omniscient"
-CHAPTER_FROM = 22
-CHAPTER_TO = 24
+SELECT_MANGA = "one-piece"
+CHAPTER_FROM = 1062
+CHAPTER_TO = 1064
 SEASON_NUMBER = 1
 EPISODE_FROM = 32
 EPISODE_TO = 32
