@@ -3,16 +3,18 @@ import re
 import time
 import pyperclip
 import requests
-import undetected_chromedriver as uc
 
+from sys import platform
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup as BSHTML
-from variables_and_constants import WORKING_DIR, URL, SELECT_MANGA, CHAPTER_NUMBERS, \
-    EXTENSION_DIR, WEBDRIVER_DIR, EXTENSION_URL
+
+from app.selenium import base_to_retrieve_imgs_urls_with_selenium
+from variables_and_constants import WORKING_DIR, URL, SELECT_MANGA, \
+     EXTENSION_URL, EXTENSION_PATH, WEBDRIVER_PATH
 
 
 # Methods for this website:
@@ -38,11 +40,10 @@ def get_chapters_urls(chapter_numbers):
 ###                 Mandatory                  ###
 ##################################################
 def retrieve_imgs_urls_with_selenium(url):
-    chrome_options_uc = uc.ChromeOptions()
-    driver = uc.Chrome(options=chrome_options_uc, use_subprocess=True)
-    driver.get(url)
+    driver = base_to_retrieve_imgs_urls_with_selenium(url)
     time.sleep(2)
-    driver.minimize_window()
+    if platform == "darwin":
+        driver.minimize_window()
     html = driver.page_source
     soup = BSHTML(html, 'html.parser')
     page_counter = soup.find('p', {'id': 'pagecountertitle'})
@@ -54,10 +55,10 @@ def retrieve_imgs_urls_with_selenium(url):
 ##################################################
 def launch_selenium(path, list_images_urls):
     chrome_options = Options()
-    chrome_options.add_extension(f"{EXTENSION_DIR}extension_to_dl_via_selenium.crx")
+    chrome_options.add_extension(EXTENSION_PATH)
     download_directory = {"download.default_directory": path}
     chrome_options.add_experimental_option("prefs", download_directory)
-    webdriver_service = Service(f"{WEBDRIVER_DIR}chromedriver")
+    webdriver_service = Service(WEBDRIVER_PATH)
     browser = webdriver.Chrome(service=webdriver_service, options=chrome_options)
 
     browser.get(EXTENSION_URL)
@@ -95,38 +96,6 @@ def requests_images(image_url, image_dl_path):
 ##################################################
 ###      Downloading with selenium method      ###
 ##################################################
-def download_images_from_urls(urls, full_paths):
-    number_of_dirs = 0
-    for base, dirs, files in os.walk(WORKING_DIR):
-        for _ in dirs:
-            number_of_dirs += 1
-    print(f"\n")
-    print(f"Manga selected for download is: {SELECT_MANGA} \n")
-    print(f"Number of chapter folders created: {number_of_dirs} \n")
-    list_urls = list(urls)
-    list_images_urls = []
-    for path in full_paths:
-        for url in list_urls:
-            images_urls = retrieve_imgs_urls_with_selenium(url)
-            for chapter in CHAPTER_NUMBERS:
-                print(f"### Downloading images for chapter n°{chapter}...")
-                manga_name = images_urls[0][2]["src"].split('/')[3].strip()
-                manga_name = re.sub('[^a-zA-Z]+', '', manga_name)
-                page_counter = images_urls[1][:-1]
-                page_counter = page_counter[-2:]
-                for page in [f"{page:02}" for page in range(1, int(page_counter) + 1)]:
-                    build_url = f"https://mangamoins.shaeishu.co/files/scans/{manga_name}{chapter}/{page}.png"
-                    list_images_urls.append(build_url)
-            launch_selenium(path, list_images_urls)
-            print("All images downloaded")
-            print("\n")
-            list_urls.remove(url)
-            break
-
-
-##################################################
-###      Downloading with requests method      ###
-##################################################
 # def download_images_from_urls(urls, full_paths):
 #     number_of_dirs = 0
 #     for base, dirs, files in os.walk(WORKING_DIR):
@@ -136,21 +105,52 @@ def download_images_from_urls(urls, full_paths):
 #     print(f"Manga selected for download is: {SELECT_MANGA} \n")
 #     print(f"Number of chapter folders created: {number_of_dirs} \n")
 #     list_urls = list(urls)
+#     list_images_urls = []
 #     for path in full_paths:
 #         for url in list_urls:
 #             images_urls = retrieve_imgs_urls_with_selenium(url)
-#             for chapter in CHAPTER_NUMBERS:
-#                 print(f"### Downloading images for chapter n°{chapter}...")
-#                 manga_name = images_urls[0][2]["src"].split('/')[3].strip()
-#                 manga_name = re.sub('[^a-zA-Z]+', '', manga_name)
-#                 page_counter = images_urls[1][:-1]
-#                 page_counter = page_counter[-2:]
-#                 for page in [f"{page:02}" for page in range(1, int(page_counter))]:
-#                     build_url = f"https://mangamoins.shaeishu.co/files/scans/{manga_name}{chapter}/{page}.png"
-#                     fullfilename = os.path.join(f"{path}/", f"{str(page).zfill(3)}.jpg")
-#                     requests_images(build_url, fullfilename)
-#                     print(
-#                         f"{page}.png downloaded and renamed to {fullfilename.rsplit('/', 1)[-1]}")
+#             print(f"### Downloading images for chapter n°{path.rsplit('/', 1)[-1]}...")
+#             manga_name = images_urls[0][2]["src"].split('/')[3].strip()
+#             manga_name = re.sub('[^a-zA-Z]+', '', manga_name)
+#             page_counter = images_urls[1][:-1]
+#             page_counter = page_counter[-2:]
+#             for page in [f"{page:02}" for page in range(1, int(page_counter) + 1)]:
+#                 build_url = f"https://mangamoins.shaeishu.co/files/scans/{manga_name}{path.rsplit('/', 1)[-1]}/{page}.png"
+#                 list_images_urls.append(build_url)
+#             launch_selenium(path, list_images_urls)
+#             print("All images downloaded")
 #             print("\n")
+#             list_images_urls = []
 #             list_urls.remove(url)
 #             break
+
+
+##################################################
+###      Downloading with requests method      ###
+##################################################
+def download_images_from_urls(urls, full_paths):
+    number_of_dirs = 0
+    for base, dirs, files in os.walk(WORKING_DIR):
+        for _ in dirs:
+            number_of_dirs += 1
+    print(f"\n")
+    print(f"Manga selected for download is: {SELECT_MANGA} \n")
+    print(f"Number of chapter folders created: {number_of_dirs} \n")
+    list_urls = list(urls)
+    for path in full_paths:
+        for url in list_urls:
+            images_urls = retrieve_imgs_urls_with_selenium(url)
+            print(f"### Downloading images for chapter n°{path.rsplit('/', 1)[-1]}...")
+            manga_name = images_urls[0][2]["src"].split('/')[3].strip()
+            manga_name = re.sub('[^a-zA-Z]+', '', manga_name)
+            page_counter = images_urls[1][:-1]
+            page_counter = page_counter[-2:]
+            for page in [f"{page:02}" for page in range(1, int(page_counter) + 1)]:
+                build_url = f"https://mangamoins.shaeishu.co/files/scans/{manga_name}{path.rsplit('/', 1)[-1]}/{page}.png"
+                fullfilename = os.path.join(f"{path}/", f"{str(page).zfill(3)}.jpg")
+                requests_images(build_url, fullfilename)
+                print(
+                    f"{page}.png downloaded and renamed to {fullfilename.rsplit('/', 1)[-1]}")
+            print("\n")
+            list_urls.remove(url)
+            break

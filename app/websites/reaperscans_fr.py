@@ -1,7 +1,10 @@
 import os
+import time
 import requests
 
-from app.selenium import retrieve_imgs_urls_with_selenium
+from sys import platform
+from bs4 import BeautifulSoup as BSHTML
+from app.selenium import base_to_retrieve_imgs_urls_with_selenium
 from variables_and_constants import WORKING_DIR, URL, SELECT_MANGA, INPUTS, CLASS_SRC_NAME
 
 
@@ -24,12 +27,31 @@ def get_chapters_urls(chapter_numbers):
     return list_of_urls
 
 
+##################################################
+###                 Mandatory                  ###
+##################################################
+def retrieve_imgs_urls_with_selenium(url):
+    driver = base_to_retrieve_imgs_urls_with_selenium(url)
+    time.sleep(2)
+    if platform == "darwin":
+        driver.minimize_window()
+    html = driver.page_source
+    soup = BSHTML(html, 'html.parser')
+    return soup.findAll('img')
+
+
+##################################################
+###                 Mandatory                  ###
+##################################################
 def requests_images(image_url, image_dl_path):
     headers = {'referer': 'https://reaperscans.fr/'}
     request = requests.post(image_url, headers=headers)
     open(image_dl_path, 'wb').write(request.content)
 
 
+##################################################
+###      Downloading with requests method      ###
+##################################################
 def download_images_from_urls(urls, full_paths):
     number_of_dirs = 0
     for base, dirs, files in os.walk(WORKING_DIR):

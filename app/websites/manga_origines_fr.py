@@ -1,13 +1,16 @@
 import os
+import time
 import requests
 
-from app.selenium import retrieve_imgs_urls_with_selenium
+from sys import platform
+from bs4 import BeautifulSoup as BSHTML
+from app.selenium import base_to_retrieve_imgs_urls_with_selenium
 from variables_and_constants import WORKING_DIR, URL, SELECT_MANGA, INPUTS, CLASS_SRC_NAME
 
 
 # Methods for this website:
 # - Request is working and is fast
-# - Selenium not working anymore because of cloudflare
+# - Selenium batch donwload not working because of cloudflare protection
 
 
 ##################################################
@@ -22,6 +25,19 @@ def get_chapters_urls(chapter_numbers):
         list_of_urls.append(urls)
         print(urls)
     return list_of_urls
+
+
+##################################################
+###                 Mandatory                  ###
+##################################################
+def retrieve_imgs_urls_with_selenium(url):
+    driver = base_to_retrieve_imgs_urls_with_selenium(url)
+    time.sleep(4)
+    if platform == "darwin":
+        driver.minimize_window()
+    html = driver.page_source
+    soup = BSHTML(html, 'html.parser')
+    return soup.findAll('img')
 
 
 ##################################################
